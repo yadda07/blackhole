@@ -21,24 +21,23 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(139,92,246,0.15),transparent)}
 .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,black,transparent)}
 
-/* Blackhole Animation */
-.blackhole-container{position:relative;width:320px;height:320px;margin-bottom:3rem}
-.blackhole-core{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:80px;height:80px;background:radial-gradient(circle,#000 0%,#000 50%,transparent 70%);border-radius:50%;box-shadow:0 0 60px 20px rgba(139,92,246,0.3),0 0 100px 40px rgba(139,92,246,0.1),inset 0 0 30px rgba(139,92,246,0.5)}
-.blackhole-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(139,92,246,0.3);animation:pulse 3s ease-in-out infinite}
-.ring-1{width:120px;height:120px;animation-delay:0s}
-.ring-2{width:180px;height:180px;animation-delay:0.5s}
-.ring-3{width:240px;height:240px;animation-delay:1s}
-.ring-4{width:300px;height:300px;animation-delay:1.5s}
-@keyframes pulse{0%,100%{opacity:0.3;transform:translate(-50%,-50%) scale(1)}50%{opacity:0.6;transform:translate(-50%,-50%) scale(1.05)}}
+/* Blackhole Animation - Realistic */
+.blackhole-container{position:relative;width:300px;height:300px;margin-bottom:3rem}
+.blackhole-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,transparent 30%,rgba(255,140,50,0.15) 50%,rgba(255,100,30,0.1) 70%,transparent 80%);animation:pulse-glow 3s ease-in-out infinite}
+@keyframes pulse-glow{0%,100%{opacity:0.8;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}}
+.photon-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:120px;height:120px;border-radius:50%;border:2px solid rgba(255,150,50,0.6);box-shadow:0 0 30px rgba(255,120,50,0.4),0 0 60px rgba(255,100,30,0.2),inset 0 0 20px rgba(255,150,50,0.3)}
+.event-horizon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:80px;height:80px;border-radius:50%;background:#000;box-shadow:0 0 50px 20px rgba(0,0,0,1),0 0 80px 40px rgba(0,0,0,0.8)}
+.singularity{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:#000}
 
-/* Data Particles */
-.particle{position:absolute;width:8px;height:8px;border-radius:50%;font-size:6px;display:flex;align-items:center;justify-content:center;font-weight:700;color:white}
-.particle-delete{background:var(--delete);box-shadow:0 0 10px var(--delete);animation:orbit-delete 8s linear infinite}
-.particle-insert{background:var(--insert);box-shadow:0 0 10px var(--insert);animation:orbit-insert 10s linear infinite}
-.particle-update{background:var(--update);box-shadow:0 0 10px var(--update);animation:orbit-update 12s linear infinite}
-@keyframes orbit-delete{from{transform:rotate(0deg) translateX(140px) rotate(0deg) scale(1)}50%{transform:rotate(180deg) translateX(100px) rotate(-180deg) scale(0.6)}to{transform:rotate(360deg) translateX(140px) rotate(-360deg) scale(1)}}
-@keyframes orbit-insert{from{transform:rotate(60deg) translateX(130px) rotate(-60deg)}50%{transform:rotate(240deg) translateX(90px) rotate(-240deg) scale(0.5)}to{transform:rotate(420deg) translateX(130px) rotate(-420deg)}}
-@keyframes orbit-update{from{transform:rotate(120deg) translateX(150px) rotate(-120deg)}50%{transform:rotate(300deg) translateX(80px) rotate(-300deg) scale(0.4)}to{transform:rotate(480deg) translateX(150px) rotate(-480deg)}}
+/* Data Particles - Smooth continuous absorption */
+.particle{position:absolute;top:50%;left:50%;margin:-7px 0 0 -7px;width:14px;height:14px;border-radius:50%;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:700;color:white;z-index:10;will-change:transform,opacity}
+.particle-delete{background:var(--delete);box-shadow:0 0 20px var(--delete);animation:vortex 4s linear infinite}
+.particle-insert{background:var(--insert);box-shadow:0 0 20px var(--insert);animation:vortex 4s linear infinite 1.33s}
+.particle-update{background:var(--update);box-shadow:0 0 20px var(--update);animation:vortex 4s linear infinite 2.66s}
+@keyframes vortex{
+  0%{transform:rotate(0deg) translateX(160px) scale(1);opacity:1}
+  100%{transform:rotate(720deg) translateX(0) scale(0);opacity:0}
+}
 
 /* Hero Content */
 .hero-content{position:relative;z-index:10;text-align:center;max-width:700px}
@@ -186,20 +185,19 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:4rem
         <div class="hero-grid"></div>
         
         <div class="blackhole-container">
-            <div class="blackhole-ring ring-1"></div>
-            <div class="blackhole-ring ring-2"></div>
-            <div class="blackhole-ring ring-3"></div>
-            <div class="blackhole-ring ring-4"></div>
-            <div class="blackhole-core"></div>
-            <div class="particle particle-delete" style="top:50%;left:50%">D</div>
-            <div class="particle particle-insert" style="top:50%;left:50%">I</div>
-            <div class="particle particle-update" style="top:50%;left:50%">U</div>
+            <div class="blackhole-glow"></div>
+            <div class="photon-ring"></div>
+            <div class="event-horizon"></div>
+            <div class="singularity"></div>
+            <div class="particle particle-delete">D</div>
+            <div class="particle particle-insert">I</div>
+            <div class="particle particle-update">U</div>
         </div>
         
         <div class="hero-content">
             <div class="hero-badge">NGE Energies Solutions - Production</div>
             <h1>Blackhole</h1>
-            <p class="hero-sub">Les donnees supprimees ne disparaissent jamais. Elles orbitent, capturees dans l'horizon des evenements, pretes a etre recuperees.</p>
+            <p class="hero-sub">Les donnees supprimees ne disparaissent jamais. Aspirees par le trou noir, elles sont capturees et pretes a etre recuperees.</p>
             <div class="hero-cta">
                 <a href="https://github.com/yadda07/bloackhole/" class="btn btn-primary" target="_blank">
                     <svg style="width:18px;height:18px;vertical-align:middle;margin-right:8px" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
