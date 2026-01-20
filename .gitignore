@@ -1,0 +1,36 @@
+# Blackhole - Git Ignore Configuration
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.bak
+*.log
+
+# Legacy files (kept for reference but not tracked)
+# Original SQL files moved to /sql/ with semantic naming
+ignore_
+table_json
+recover_json.sql
+triggers.sql
+recover.sql
+
+# Example/reference files
+exemple.html
+
+# Note: Project images (blackhole_*.jpg) are tracked for documentation
+
+# Build artifacts
+node_modules/
+dist/
+build/
