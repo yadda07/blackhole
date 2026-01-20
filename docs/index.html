@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackhole - Data Recovery System</title>
+    <meta name="description" content="Systeme centralise de recuperation et d'audit des donnees PostgreSQL">
+    <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+    --bg:#09090b;--surface:#18181b;--surface-2:#27272a;--border:#3f3f46;
+    --text:#fafafa;--text-muted:#a1a1aa;--accent:#8b5cf6;--accent-glow:rgba(139,92,246,0.3);
+    --capture:#f59e0b;--recover:#10b981;--delete:#ef4444;--insert:#22c55e;--update:#eab308;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+::selection{background:var(--accent);color:white}
+
+/* Hero */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:2rem}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(139,92,246,0.15),transparent)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,black,transparent)}
+
+/* Blackhole Animation */
+.blackhole-container{position:relative;width:320px;height:320px;margin-bottom:3rem}
+.blackhole-core{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:80px;height:80px;background:radial-gradient(circle,#000 0%,#000 50%,transparent 70%);border-radius:50%;box-shadow:0 0 60px 20px rgba(139,92,246,0.3),0 0 100px 40px rgba(139,92,246,0.1),inset 0 0 30px rgba(139,92,246,0.5)}
+.blackhole-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(139,92,246,0.3);animation:pulse 3s ease-in-out infinite}
+.ring-1{width:120px;height:120px;animation-delay:0s}
+.ring-2{width:180px;height:180px;animation-delay:0.5s}
+.ring-3{width:240px;height:240px;animation-delay:1s}
+.ring-4{width:300px;height:300px;animation-delay:1.5s}
+@keyframes pulse{0%,100%{opacity:0.3;transform:translate(-50%,-50%) scale(1)}50%{opacity:0.6;transform:translate(-50%,-50%) scale(1.05)}}
+
+/* Data Particles */
+.particle{position:absolute;width:8px;height:8px;border-radius:50%;font-size:6px;display:flex;align-items:center;justify-content:center;font-weight:700;color:white}
+.particle-delete{background:var(--delete);box-shadow:0 0 10px var(--delete);animation:orbit-delete 8s linear infinite}
+.particle-insert{background:var(--insert);box-shadow:0 0 10px var(--insert);animation:orbit-insert 10s linear infinite}
+.particle-update{background:var(--update);box-shadow:0 0 10px var(--update);animation:orbit-update 12s linear infinite}
+@keyframes orbit-delete{from{transform:rotate(0deg) translateX(140px) rotate(0deg) scale(1)}50%{transform:rotate(180deg) translateX(100px) rotate(-180deg) scale(0.6)}to{transform:rotate(360deg) translateX(140px) rotate(-360deg) scale(1)}}
+@keyframes orbit-insert{from{transform:rotate(60deg) translateX(130px) rotate(-60deg)}50%{transform:rotate(240deg) translateX(90px) rotate(-240deg) scale(0.5)}to{transform:rotate(420deg) translateX(130px) rotate(-420deg)}}
+@keyframes orbit-update{from{transform:rotate(120deg) translateX(150px) rotate(-120deg)}50%{transform:rotate(300deg) translateX(80px) rotate(-300deg) scale(0.4)}to{transform:rotate(480deg) translateX(150px) rotate(-480deg)}}
+
+/* Hero Content */
+.hero-content{position:relative;z-index:10;text-align:center;max-width:700px}
+.hero-badge{display:inline-flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:100px;font-size:0.8rem;color:var(--text-muted);margin-bottom:1.5rem}
+.hero-badge::before{content:'';width:6px;height:6px;background:var(--recover);border-radius:50%;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+h1{font-size:clamp(2.5rem,8vw,4.5rem);font-weight:700;letter-spacing:-0.03em;line-height:1.1;margin-bottom:1rem;background:linear-gradient(to bottom,#fff 0%,#a1a1aa 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:1.2rem;color:var(--text-muted);max-width:500px;margin:0 auto 2rem}
+.hero-cta{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn{padding:0.875rem 1.75rem;border-radius:10px;font-weight:600;font-size:0.95rem;text-decoration:none;transition:all 0.2s;cursor:pointer;border:none}
+.btn-primary{background:var(--accent);color:white;box-shadow:0 0 20px var(--accent-glow)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 30px var(--accent-glow)}
+.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--surface-2);border-color:var(--text-muted)}
+
+/* Scroll Indicator */
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:0.5rem;color:var(--text-muted);font-size:0.75rem;animation:float 2s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+.scroll-hint svg{width:20px;height:20px;opacity:0.5}
+
+/* Navigation */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 2rem;background:rgba(9,9,11,0.8);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.05);opacity:0;transform:translateY(-100%);transition:all 0.3s}
+nav.visible{opacity:1;transform:translateY(0)}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+.nav-logo{font-weight:700;font-size:1.1rem;display:flex;align-items:center;gap:0.5rem}
+.nav-logo svg{width:24px;height:24px}
+.nav-links{display:flex;gap:2rem}
+.nav-links a{color:var(--text-muted);text-decoration:none;font-size:0.9rem;transition:color 0.2s}
+.nav-links a:hover{color:var(--text)}
+
+/* Sections */
+section{padding:6rem 2rem;max-width:1200px;margin:0 auto}
+.section-label{display:inline-block;font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:1rem;padding:0.25rem 0.75rem;background:rgba(139,92,246,0.1);border-radius:100px}
+h2{font-size:clamp(1.75rem,4vw,2.5rem);font-weight:700;letter-spacing:-0.02em;margin-bottom:1rem}
+.section-desc{color:var(--text-muted);font-size:1.1rem;max-width:600px;margin-bottom:3rem}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin:4rem 0}
+@media(max-width:768px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem;text-align:center;transition:all 0.3s}
+.stat:hover{border-color:var(--accent);transform:translateY(-4px)}
+.stat-value{font-size:2.5rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--recover));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.stat-label{color:var(--text-muted);font-size:0.85rem;margin-top:0.5rem}
+
+/* Architecture */
+.arch-compare{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:3rem}
+@media(max-width:900px){.arch-compare{grid-template-columns:1fr}}
+.arch-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem;position:relative;overflow:hidden}
+.arch-card.old::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--delete),var(--capture))}
+.arch-card.new::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--recover))}
+.arch-card h3{font-size:1.25rem;margin-bottom:0.5rem}
+.arch-card.old h3{color:var(--text-muted)}
+.arch-card.new h3{color:var(--recover)}
+.arch-formula{font-family:'Fira Code',monospace;font-size:0.85rem;color:var(--text-muted);background:var(--bg);padding:1rem;border-radius:8px;margin:1rem 0}
+.arch-visual{display:flex;flex-direction:column;gap:0.5rem;margin-top:1.5rem}
+.arch-row{display:flex;gap:0.25rem;justify-content:center}
+.arch-box{padding:0.4rem 0.6rem;border-radius:6px;font-size:0.7rem;font-weight:600;color:white}
+.arch-box.tbl{background:#52525b}.arch-box.trg{background:var(--capture)}.arch-box.fn{background:var(--accent)}.arch-box.aud{background:var(--recover)}
+.arch-arrow{text-align:center;color:var(--text-muted);font-size:1.5rem;margin:0.5rem 0}
+
+/* Flow Diagram */
+.flow-section{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:3rem;margin:4rem 0}
+.flow-title{text-align:center;margin-bottom:2rem}
+.flow-title h3{font-size:1.5rem}
+.flow-steps{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
+.flow-step{flex:1;min-width:140px;text-align:center}
+.flow-icon{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.5rem;transition:all 0.3s}
+.flow-step:hover .flow-icon{transform:scale(1.1)}
+.flow-icon.pg{background:linear-gradient(135deg,#336791,#1e3a5f)}
+.flow-icon.op{background:var(--surface-2);border:1px solid var(--border)}
+.flow-icon.tr{background:linear-gradient(135deg,var(--capture),#b45309)}
+.flow-icon.js{background:linear-gradient(135deg,var(--accent),#6d28d9)}
+.flow-icon.rc{background:linear-gradient(135deg,var(--recover),#047857)}
+.flow-label{font-weight:600;font-size:0.9rem;margin-bottom:0.25rem}
+.flow-desc{font-size:0.75rem;color:var(--text-muted)}
+.flow-arrow{color:var(--text-muted);font-size:1.5rem;flex-shrink:0}
+@media(max-width:768px){.flow-arrow{display:none}.flow-steps{flex-direction:column}}
+
+/* Code Blocks */
+.code-block{background:#0d1117;border-radius:12px;padding:1.5rem;overflow-x:auto;margin:1.5rem 0;border:1px solid #30363d}
+.code-block pre{font-family:'Fira Code',monospace;font-size:0.85rem;color:#c9d1d9;line-height:1.7}
+.code-block .kw{color:#ff7b72}.code-block .fn{color:#d2a8ff}.code-block .st{color:#a5d6ff}.code-block .cm{color:#8b949e}.code-block .tp{color:#7ee787}
+
+/* Tables */
+.data-table{width:100%;border-collapse:collapse;margin:1.5rem 0}
+.data-table th,.data-table td{padding:1rem;text-align:left;border-bottom:1px solid var(--border)}
+.data-table th{font-weight:600;color:var(--text-muted);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em}
+.data-table tr:hover td{background:rgba(139,92,246,0.05)}
+.badge{display:inline-block;padding:0.25rem 0.75rem;border-radius:100px;font-size:0.75rem;font-weight:600}
+.badge.del{background:rgba(239,68,68,0.15);color:var(--delete)}
+.badge.upd{background:rgba(234,179,8,0.15);color:var(--update)}
+.badge.ins{background:rgba(34,197,94,0.15);color:var(--insert)}
+code{background:var(--surface-2);padding:0.2rem 0.5rem;border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85rem;color:var(--accent)}
+
+/* Cards Grid */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin:2rem 0}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem;transition:all 0.3s}
+.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.card-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;background:rgba(139,92,246,0.1)}
+.card-icon svg{width:24px;height:24px;color:var(--accent)}
+.card h4{font-size:1rem;margin-bottom:0.5rem}
+.card p{font-size:0.875rem;color:var(--text-muted)}
+
+/* Footer */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:4rem 2rem;margin-top:4rem}
+.footer-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:4rem}
+@media(max-width:768px){.footer-inner{grid-template-columns:1fr;gap:2rem}}
+.footer-brand h3{font-size:1.25rem;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.5rem}
+.footer-brand p{color:var(--text-muted);font-size:0.9rem;max-width:300px}
+.footer-links h4{font-size:0.8rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:1rem}
+.footer-links a{display:block;color:var(--text);text-decoration:none;padding:0.5rem 0;font-size:0.9rem;transition:color 0.2s}
+.footer-links a:hover{color:var(--accent)}
+.footer-links a svg{width:16px;height:16px;vertical-align:middle;margin-right:0.5rem}
+.footer-bottom{max-width:1200px;margin:3rem auto 0;padding-top:2rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;font-size:0.85rem;color:var(--text-muted)}
+
+/* Animations */
+.reveal{opacity:0;transform:translateY(30px);transition:all 0.8s cubic-bezier(0.16,1,0.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:0.1s}.reveal-delay-2{transition-delay:0.2s}.reveal-delay-3{transition-delay:0.3s}
+
+/* Glow Effects */
+.glow-line{height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:4rem 0;opacity:0.5}
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="nav">
+        <div class="nav-inner">
+            <div class="nav-logo">
+                <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>
+                Blackhole
+            </div>
+            <div class="nav-links">
+                <a href="#architecture">Architecture</a>
+                <a href="#flow">Flux</a>
+                <a href="#functions">Fonctions</a>
+                <a href="#advantages">Avantages</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-grid"></div>
+        
+        <div class="blackhole-container">
+            <div class="blackhole-ring ring-1"></div>
+            <div class="blackhole-ring ring-2"></div>
+            <div class="blackhole-ring ring-3"></div>
+            <div class="blackhole-ring ring-4"></div>
+            <div class="blackhole-core"></div>
+            <div class="particle particle-delete" style="top:50%;left:50%">D</div>
+            <div class="particle particle-insert" style="top:50%;left:50%">I</div>
+            <div class="particle particle-update" style="top:50%;left:50%">U</div>
+        </div>
+        
+        <div class="hero-content">
+            <div class="hero-badge">NGE Energies Solutions - Production</div>
+            <h1>Blackhole</h1>
+            <p class="hero-sub">Les donnees supprimees ne disparaissent jamais. Elles orbitent, capturees dans l'horizon des evenements, pretes a etre recuperees.</p>
+            <div class="hero-cta">
+                <a href="https://github.com/yadda07/bloackhole/" class="btn btn-primary" target="_blank">
+                    <svg style="width:18px;height:18px;vertical-align:middle;margin-right:8px" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                    Voir sur GitHub
+                </a>
+                <a href="#architecture" class="btn btn-secondary">Decouvrir</a>
+            </div>
+        </div>
+        
+        <div class="scroll-hint">
+            <span>Defiler</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section>
+        <div class="stats reveal">
+            <div class="stat"><div class="stat-value">7</div><div class="stat-label">Schemas supportes</div></div>
+            <div class="stat"><div class="stat-value">1</div><div class="stat-label">Fonction trigger</div></div>
+            <div class="stat"><div class="stat-value">1</div><div class="stat-label">Fonction recover</div></div>
+            <div class="stat"><div class="stat-value">N:1</div><div class="stat-label">Consolidation</div></div>
+        </div>
+    </section>
+
+    <div class="glow-line"></div>
+
+    <!-- Architecture -->
+    <section id="architecture">
+        <span class="section-label reveal">Architecture</span>
+        <h2 class="reveal">De la complexite a la simplicite</h2>
+        <p class="section-desc reveal">Une seule fonction trigger remplace des dizaines de tables miroir. Le stockage JSONB centralise permet une flexibilite totale.</p>
+        
+        <div class="arch-compare">
+            <div class="arch-card old reveal">
+                <h3>Avant</h3>
+                <p style="color:var(--text-muted);font-size:0.9rem">Architecture fragmentee</p>
+                <div class="arch-formula">N tables = N triggers + N fonctions + N tables miroir</div>
+                <div class="arch-visual">
+                    <div class="arch-row"><span class="arch-box tbl">Tab 1</span><span class="arch-box trg">Trg</span><span class="arch-box fn">Fn</span><span class="arch-box aud">Mir</span></div>
+                    <div class="arch-row"><span class="arch-box tbl">Tab 2</span><span class="arch-box trg">Trg</span><span class="arch-box fn">Fn</span><span class="arch-box aud">Mir</span></div>
+                    <div class="arch-row"><span class="arch-box tbl">Tab N</span><span class="arch-box trg">Trg</span><span class="arch-box fn">Fn</span><span class="arch-box aud">Mir</span></div>
+                </div>
+            </div>
+            <div class="arch-card new reveal reveal-delay-1">
+                <h3>Blackhole</h3>
+                <p style="color:var(--text-muted);font-size:0.9rem">Architecture centralisee</p>
+                <div class="arch-formula">N tables = 1 trigger + 1 table JSONB centrale</div>
+                <div class="arch-visual">
+                    <div class="arch-row"><span class="arch-box tbl">Tab 1</span><span class="arch-box tbl">Tab 2</span><span class="arch-box tbl">Tab N</span></div>
+                    <div class="arch-arrow">&#8595;</div>
+                    <div class="arch-row"><span class="arch-box fn" style="padding:0.6rem 1.2rem">recover_json()</span></div>
+                    <div class="arch-arrow">&#8595;</div>
+                    <div class="arch-row"><span class="arch-box aud" style="padding:0.6rem 1.2rem">Table JSONB</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Flow -->
+    <section id="flow">
+        <div class="flow-section reveal">
+            <div class="flow-title">
+                <span class="section-label">Flux de donnees</span>
+                <h3>Le voyage des donnees</h3>
+            </div>
+            <div class="flow-steps">
+                <div class="flow-step">
+                    <div class="flow-icon pg"><svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div>
+                    <div class="flow-label">PostgreSQL</div>
+                    <div class="flow-desc">Tables sources</div>
+                </div>
+                <div class="flow-arrow">&#8594;</div>
+                <div class="flow-step">
+                    <div class="flow-icon op">
+                        <div style="font-size:0.6rem;line-height:1.2"><span style="color:var(--insert)">I</span> <span style="color:var(--update)">U</span> <span style="color:var(--delete)">D</span></div>
+                    </div>
+                    <div class="flow-label">Operations</div>
+                    <div class="flow-desc">INSERT UPDATE DELETE</div>
+                </div>
+                <div class="flow-arrow">&#8594;</div>
+                <div class="flow-step">
+                    <div class="flow-icon tr"><svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+                    <div class="flow-label">Trigger</div>
+                    <div class="flow-desc">recover_json()</div>
+                </div>
+                <div class="flow-arrow">&#8594;</div>
+                <div class="flow-step">
+                    <div class="flow-icon js"><svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-6h2v6zm4 0h-2v-6h2v6zm-2-8h-2V7h2v2z"/></svg></div>
+                    <div class="flow-label">JSONB</div>
+                    <div class="flow-desc">Stockage central</div>
+                </div>
+                <div class="flow-arrow">&#8594;</div>
+                <div class="flow-step">
+                    <div class="flow-icon rc"><svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg></div>
+                    <div class="flow-label">Recover</div>
+                    <div class="flow-desc">Restauration</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Functions -->
+    <section id="functions">
+        <span class="section-label reveal">Fonctions</span>
+        <h2 class="reveal">Deux fonctions, toute la puissance</h2>
+        
+        <div class="cards">
+            <div class="card reveal">
+                <div class="card-icon" style="background:rgba(245,158,11,0.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+                <h4>recover_json()</h4>
+                <p>Capture automatique de chaque operation. Les valeurs OLD sont serialisees en JSONB avec timestamp et utilisateur.</p>
+            </div>
+            <div class="card reveal reveal-delay-1">
+                <div class="card-icon" style="background:rgba(16,185,129,0.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5"/></svg></div>
+                <h4>recover()</h4>
+                <p>Reconstruction des donnees historiques. Filtrage par table, operation, periode et utilisateur.</p>
+            </div>
+        </div>
+
+        <div class="reveal" style="margin-top:2rem">
+            <h4 style="margin-bottom:1rem">Comportement du trigger</h4>
+            <table class="data-table">
+                <thead><tr><th>Operation</th><th>Capture</th><th>Semantique</th></tr></thead>
+                <tbody>
+                    <tr><td><span class="badge del">DELETE</span></td><td><code>OLD</code></td><td>Derniere trace avant disparition</td></tr>
+                    <tr><td><span class="badge upd">UPDATE</span></td><td><code>OLD</code></td><td>Etat precedent preserve</td></tr>
+                    <tr><td><span class="badge ins">INSERT</span></td><td><code>NEW</code></td><td>Naissance enregistree</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="reveal" style="margin-top:2rem">
+            <h4 style="margin-bottom:1rem">Exemple de recuperation</h4>
+            <div class="code-block">
+<pre><span class="kw">SELECT</span> rip_avg_nge.<span class="fn">recover</span>(
+    <span class="st">'rip_avg_nge'</span>,           <span class="cm">-- schema</span>
+    <span class="st">'infra_pt_pot'</span>,          <span class="cm">-- table</span>
+    <span class="st">'DELETE'</span>,                <span class="cm">-- operation</span>
+    <span class="st">'2025-01-01'</span>,            <span class="cm">-- debut</span>
+    <span class="st">'2025-01-31'</span>,            <span class="cm">-- fin</span>
+    <span class="tp">100</span>                      <span class="cm">-- limite</span>
+);
+
+<span class="cm">-- Donnees restaurees dans :</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="fn">temp_rip_avg_nge_infra_pt_pot</span>;</pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advantages -->
+    <section id="advantages">
+        <span class="section-label reveal">Avantages</span>
+        <h2 class="reveal">Pourquoi Blackhole ?</h2>
+        
+        <div class="cards">
+            <div class="card reveal"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><h4>Centralisation</h4><p>Une table par schema au lieu de N tables miroir</p></div>
+            <div class="card reveal reveal-delay-1"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div><h4>Flexibilite JSONB</h4><p>Schema-agnostique, zero migration</p></div>
+            <div class="card reveal reveal-delay-2"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg></div><h4>Evolutivite</h4><p>Nouvelles tables sans modification</p></div>
+            <div class="card reveal reveal-delay-3"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h4>Tracabilite</h4><p>Utilisateur + timestamp par operation</p></div>
+            <div class="card reveal"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><h4>Performance</h4><p>Index composite, O(log n)</p></div>
+            <div class="card reveal reveal-delay-1"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></div><h4>Recuperation</h4><p>Reconstruction dynamique JSONB</p></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <h3><svg viewBox="0 0 24 24" fill="none" width="24" height="24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg> Blackhole</h3>
+                <p>Systeme de recuperation de donnees PostgreSQL. Les donnees ne disparaissent jamais vraiment.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Projet</h4>
+                <a href="https://github.com/yadda07/bloackhole/" target="_blank"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>GitHub</a>
+                <a href="#architecture">Documentation</a>
+            </div>
+            <div class="footer-links">
+                <h4>Contact</h4>
+                <a href="https://www.linkedin.com/in/youcef-adda/" target="_blank"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>LinkedIn</a>
+                <a href="mailto:youcef.geodesien@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Email</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>NGE Energies Solutions - Dev Team</span>
+            <span>Youcef Adda</span>
+        </div>
+    </footer>
+
+    <script>
+    // Nav scroll
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+        nav.classList.toggle('visible', window.scrollY > 100);
+    });
+
+    // Reveal on scroll
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    </script>
+</body>
+</html>
