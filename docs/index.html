@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,7 +54,8 @@ h1{font-size:clamp(2.5rem,8vw,4.5rem);font-weight:700;letter-spacing:-0.03em;lin
 .btn-secondary:hover{background:var(--surface-2);border-color:var(--text-muted)}
 
 /* Scroll Indicator */
-.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:0.5rem;color:var(--text-muted);font-size:0.75rem;animation:float 2s ease-in-out infinite}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:0.5rem;color:var(--text-muted);font-size:0.75rem;animation:float 2s ease-in-out infinite;transition:opacity 0.3s}
+.scroll-hint.hidden{opacity:0;pointer-events:none}
 @keyframes float{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
 .scroll-hint svg{width:20px;height:20px;opacity:0.5}
 
@@ -67,6 +68,9 @@ nav.visible{opacity:1;transform:translateY(0)}
 .nav-links{display:flex;gap:2rem}
 .nav-links a{color:var(--text-muted);text-decoration:none;font-size:0.9rem;transition:color 0.2s}
 .nav-links a:hover{color:var(--text)}
+.lang-btn{background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:0.4rem 0.8rem;color:var(--text);font-size:0.85rem;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:0.4rem}
+.lang-btn:hover{border-color:var(--accent);background:var(--surface)}
+.lang-btn svg{width:16px;height:16px}
 
 /* Sections */
 section{padding:6rem 2rem;max-width:1200px;margin:0 auto}
@@ -171,10 +175,14 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:4rem
                 Blackhole
             </div>
             <div class="nav-links">
-                <a href="#architecture">Architecture</a>
-                <a href="#flow">Flux</a>
-                <a href="#functions">Fonctions</a>
-                <a href="#advantages">Avantages</a>
+                <a href="#architecture" data-i18n="nav.arch">Architecture</a>
+                <a href="#flow" data-i18n="nav.flow">Flow</a>
+                <a href="#functions" data-i18n="nav.func">Functions</a>
+                <a href="#advantages" data-i18n="nav.adv">Advantages</a>
+                <button class="lang-btn" id="langToggle" onclick="toggleLang()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    <span id="langLabel">FR</span>
+                </button>
             </div>
         </div>
     </nav>
@@ -197,18 +205,18 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:4rem
         <div class="hero-content">
             <div class="hero-badge">NGE Energies Solutions - Production</div>
             <h1>Blackhole</h1>
-            <p class="hero-sub">Les donnees supprimees ne disparaissent jamais. Aspirees par le trou noir, elles sont capturees et pretes a etre recuperees.</p>
+            <p class="hero-sub" data-i18n="hero.sub">Deleted data never disappears. Absorbed by the black hole, it is captured and ready to be recovered.</p>
             <div class="hero-cta">
                 <a href="https://github.com/yadda07/blackhole/" class="btn btn-primary" target="_blank">
                     <svg style="width:18px;height:18px;vertical-align:middle;margin-right:8px" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                    Voir sur GitHub
+                    <span data-i18n="hero.github">View on GitHub</span>
                 </a>
-                <a href="#architecture" class="btn btn-secondary">Decouvrir</a>
+                <a href="#architecture" class="btn btn-secondary" data-i18n="hero.discover">Discover</a>
             </div>
         </div>
         
         <div class="scroll-hint">
-            <span>Defiler</span>
+            <span data-i18n="hero.scroll">Scroll</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
         </div>
     </section>
@@ -216,10 +224,10 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:4rem
     <!-- Stats -->
     <section>
         <div class="stats reveal">
-            <div class="stat"><div class="stat-value">7</div><div class="stat-label">Schemas supportes</div></div>
-            <div class="stat"><div class="stat-value">1</div><div class="stat-label">Fonction trigger</div></div>
-            <div class="stat"><div class="stat-value">1</div><div class="stat-label">Fonction recover</div></div>
-            <div class="stat"><div class="stat-value">N:1</div><div class="stat-label">Consolidation</div></div>
+            <div class="stat"><div class="stat-value">7</div><div class="stat-label" data-i18n="stats.schemas">Supported schemas</div></div>
+            <div class="stat"><div class="stat-value">1</div><div class="stat-label" data-i18n="stats.trigger">Trigger function</div></div>
+            <div class="stat"><div class="stat-value">1</div><div class="stat-label" data-i18n="stats.recover">Recover function</div></div>
+            <div class="stat"><div class="stat-value">N:1</div><div class="stat-label" data-i18n="stats.consol">Consolidation</div></div>
         </div>
     </section>
 
@@ -227,14 +235,14 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:4rem
 
     <!-- Architecture -->
     <section id="architecture">
-        <span class="section-label reveal">Architecture</span>
-        <h2 class="reveal">De la complexite a la simplicite</h2>
-        <p class="section-desc reveal">Une seule fonction trigger remplace des dizaines de tables miroir. Le stockage JSONB centralise permet une flexibilite totale.</p>
+        <span class="section-label reveal" data-i18n="arch.label">Architecture</span>
+        <h2 class="reveal" data-i18n="arch.title">From complexity to simplicity</h2>
+        <p class="section-desc reveal" data-i18n="arch.desc">A single trigger function replaces dozens of mirror tables. Centralized JSONB storage provides total flexibility.</p>
         
         <div class="arch-compare">
             <div class="arch-card old reveal">
-                <h3>Avant</h3>
-                <p style="color:var(--text-muted);font-size:0.9rem">Architecture fragmentee</p>
+                <h3 data-i18n="arch.before">Before</h3>
+                <p style="color:var(--text-muted);font-size:0.9rem" data-i18n="arch.frag">Fragmented architecture</p>
                 <div class="arch-formula">N tables = N triggers + N fonctions + N tables miroir</div>
                 <div class="arch-visual">
                     <div class="arch-row"><span class="arch-box tbl">Tab 1</span><span class="arch-box trg">Trg</span><span class="arch-box fn">Fn</span><span class="arch-box aud">Mir</span></div>
@@ -244,7 +252,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:4rem
             </div>
             <div class="arch-card new reveal reveal-delay-1">
                 <h3>Blackhole</h3>
-                <p style="color:var(--text-muted);font-size:0.9rem">Architecture centralisee</p>
+                <p style="color:var(--text-muted);font-size:0.9rem" data-i18n="arch.central">Centralized architecture</p>
                 <div class="arch-formula">N tables = 1 trigger + 1 table JSONB centrale</div>
                 <div class="arch-visual">
                     <div class="arch-row"><span class="arch-box tbl">Tab 1</span><span class="arch-box tbl">Tab 2</span><span class="arch-box tbl">Tab N</span></div>
@@ -261,21 +269,21 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:4rem
     <section id="flow">
         <div class="flow-section reveal">
             <div class="flow-title">
-                <span class="section-label">Flux de donnees</span>
-                <h3>Le voyage des donnees</h3>
+                <span class="section-label" data-i18n="flow.label">Data Flow</span>
+                <h3 data-i18n="flow.title">The data journey</h3>
             </div>
             <div class="flow-steps">
                 <div class="flow-step">
                     <div class="flow-icon pg"><svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div>
                     <div class="flow-label">PostgreSQL</div>
-                    <div class="flow-desc">Tables sources</div>
+                    <div class="flow-desc" data-i18n="flow.sources">Source tables</div>
                 </div>
                 <div class="flow-arrow">&#8594;</div>
                 <div class="flow-step">
                     <div class="flow-icon op">
                         <div style="font-size:0.6rem;line-height:1.2"><span style="color:var(--insert)">I</span> <span style="color:var(--update)">U</span> <span style="color:var(--delete)">D</span></div>
                     </div>
-                    <div class="flow-label">Operations</div>
+                    <div class="flow-label" data-i18n="flow.ops">Operations</div>
                     <div class="flow-desc">INSERT UPDATE DELETE</div>
                 </div>
                 <div class="flow-arrow">&#8594;</div>
@@ -288,13 +296,13 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:4rem
                 <div class="flow-step">
                     <div class="flow-icon js"><svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-6h2v6zm4 0h-2v-6h2v6zm-2-8h-2V7h2v2z"/></svg></div>
                     <div class="flow-label">JSONB</div>
-                    <div class="flow-desc">Stockage central</div>
+                    <div class="flow-desc" data-i18n="flow.storage">Central storage</div>
                 </div>
                 <div class="flow-arrow">&#8594;</div>
                 <div class="flow-step">
                     <div class="flow-icon rc"><svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg></div>
                     <div class="flow-label">Recover</div>
-                    <div class="flow-desc">Restauration</div>
+                    <div class="flow-desc" data-i18n="flow.restore">Restoration</div>
                 </div>
             </div>
         </div>
@@ -302,36 +310,36 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:4rem
 
     <!-- Functions -->
     <section id="functions">
-        <span class="section-label reveal">Fonctions</span>
-        <h2 class="reveal">Deux fonctions, toute la puissance</h2>
+        <span class="section-label reveal" data-i18n="func.label">Functions</span>
+        <h2 class="reveal" data-i18n="func.title">Two functions, all the power</h2>
         
         <div class="cards">
             <div class="card reveal">
                 <div class="card-icon" style="background:rgba(245,158,11,0.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
                 <h4>recover_json()</h4>
-                <p>Capture automatique de chaque operation. Les valeurs OLD sont serialisees en JSONB avec timestamp et utilisateur.</p>
+                <p data-i18n="func.capture">Automatic capture of each operation. OLD values are serialized to JSONB with timestamp and user.</p>
             </div>
             <div class="card reveal reveal-delay-1">
                 <div class="card-icon" style="background:rgba(16,185,129,0.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5"/></svg></div>
                 <h4>recover()</h4>
-                <p>Reconstruction des donnees historiques. Filtrage par table, operation, periode et utilisateur.</p>
+                <p data-i18n="func.recon">Historical data reconstruction. Filtering by table, operation, period and user.</p>
             </div>
         </div>
 
         <div class="reveal" style="margin-top:2rem">
-            <h4 style="margin-bottom:1rem">Comportement du trigger</h4>
+            <h4 style="margin-bottom:1rem" data-i18n="func.behavior">Trigger behavior</h4>
             <table class="data-table">
-                <thead><tr><th>Operation</th><th>Capture</th><th>Semantique</th></tr></thead>
+                <thead><tr><th data-i18n="func.th.op">Operation</th><th data-i18n="func.th.cap">Capture</th><th data-i18n="func.th.sem">Semantics</th></tr></thead>
                 <tbody>
-                    <tr><td><span class="badge del">DELETE</span></td><td><code>OLD</code></td><td>Derniere trace avant disparition</td></tr>
-                    <tr><td><span class="badge upd">UPDATE</span></td><td><code>OLD</code></td><td>Etat precedent preserve</td></tr>
-                    <tr><td><span class="badge ins">INSERT</span></td><td><code>NEW</code></td><td>Naissance enregistree</td></tr>
+                    <tr><td><span class="badge del">DELETE</span></td><td><code>OLD</code></td><td data-i18n="func.del.sem">Last trace before deletion</td></tr>
+                    <tr><td><span class="badge upd">UPDATE</span></td><td><code>OLD</code></td><td data-i18n="func.upd.sem">Previous state preserved</td></tr>
+                    <tr><td><span class="badge ins">INSERT</span></td><td><code>NEW</code></td><td data-i18n="func.ins.sem">Birth recorded</td></tr>
                 </tbody>
             </table>
         </div>
 
         <div class="reveal" style="margin-top:2rem">
-            <h4 style="margin-bottom:1rem">Exemple de recuperation</h4>
+            <h4 style="margin-bottom:1rem" data-i18n="func.example">Recovery example</h4>
             <div class="code-block">
 <pre><span class="kw">SELECT</span> rip_avg_nge.<span class="fn">recover</span>(
     <span class="st">'rip_avg_nge'</span>,           <span class="cm">-- schema</span>
@@ -350,16 +358,16 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:4rem
 
     <!-- Advantages -->
     <section id="advantages">
-        <span class="section-label reveal">Avantages</span>
-        <h2 class="reveal">Pourquoi Blackhole ?</h2>
+        <span class="section-label reveal" data-i18n="adv.label">Advantages</span>
+        <h2 class="reveal" data-i18n="adv.title">Why Blackhole?</h2>
         
         <div class="cards">
-            <div class="card reveal"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><h4>Centralisation</h4><p>Une table par schema au lieu de N tables miroir</p></div>
-            <div class="card reveal reveal-delay-1"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div><h4>Flexibilite JSONB</h4><p>Schema-agnostique, zero migration</p></div>
-            <div class="card reveal reveal-delay-2"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg></div><h4>Evolutivite</h4><p>Nouvelles tables sans modification</p></div>
-            <div class="card reveal reveal-delay-3"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h4>Tracabilite</h4><p>Utilisateur + timestamp par operation</p></div>
-            <div class="card reveal"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><h4>Performance</h4><p>Index composite, O(log n)</p></div>
-            <div class="card reveal reveal-delay-1"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></div><h4>Recuperation</h4><p>Reconstruction dynamique JSONB</p></div>
+            <div class="card reveal"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><h4 data-i18n="adv.c1.t">Centralization</h4><p data-i18n="adv.c1.d">One table per schema instead of N mirror tables</p></div>
+            <div class="card reveal reveal-delay-1"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div><h4 data-i18n="adv.c2.t">JSONB Flexibility</h4><p data-i18n="adv.c2.d">Schema-agnostic, zero migration</p></div>
+            <div class="card reveal reveal-delay-2"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg></div><h4 data-i18n="adv.c3.t">Scalability</h4><p data-i18n="adv.c3.d">New tables without modification</p></div>
+            <div class="card reveal reveal-delay-3"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h4 data-i18n="adv.c4.t">Traceability</h4><p data-i18n="adv.c4.d">User + timestamp per operation</p></div>
+            <div class="card reveal"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><h4 data-i18n="adv.c5.t">Performance</h4><p data-i18n="adv.c5.d">Composite index, O(log n)</p></div>
+            <div class="card reveal reveal-delay-1"><div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></div><h4 data-i18n="adv.c6.t">Recovery</h4><p data-i18n="adv.c6.d">Dynamic JSONB reconstruction</p></div>
         </div>
     </section>
 
@@ -368,12 +376,12 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:4rem
         <div class="footer-inner">
             <div class="footer-brand">
                 <h3><svg viewBox="0 0 24 24" fill="none" width="24" height="24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg> Blackhole</h3>
-                <p>Systeme de recuperation de donnees PostgreSQL. Les donnees ne disparaissent jamais vraiment.</p>
+                <p data-i18n="footer.desc">Every modification, deletion or insertion leaves a trace. Blackhole preserves your data history and gives you the power to travel back in time.</p>
             </div>
             <div class="footer-links">
-                <h4>Projet</h4>
+                <h4 data-i18n="footer.project">Project</h4>
                 <a href="https://github.com/yadda07/blackhole/" target="_blank"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>GitHub</a>
-                <a href="#architecture">Documentation</a>
+                <a href="#architecture" data-i18n="footer.docs">Documentation</a>
             </div>
             <div class="footer-links">
                 <h4>Contact</h4>
@@ -388,10 +396,88 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:4rem
     </footer>
 
     <script>
-    // Nav scroll
+    // Translations
+    const i18n = {
+        en: {
+            'nav.arch': 'Architecture', 'nav.flow': 'Flow', 'nav.func': 'Functions', 'nav.adv': 'Advantages',
+            'hero.sub': 'Deleted data never disappears. Absorbed by the black hole, it is captured and ready to be recovered.',
+            'hero.github': 'View on GitHub', 'hero.discover': 'Discover', 'hero.scroll': 'Scroll',
+            'stats.schemas': 'Supported schemas', 'stats.trigger': 'Trigger function', 'stats.recover': 'Recover function', 'stats.consol': 'Consolidation',
+            'arch.label': 'Architecture', 'arch.title': 'From complexity to simplicity',
+            'arch.desc': 'A single trigger function replaces dozens of mirror tables. Centralized JSONB storage provides total flexibility.',
+            'arch.before': 'Before', 'arch.frag': 'Fragmented architecture', 'arch.central': 'Centralized architecture',
+            'flow.label': 'Data Flow', 'flow.title': 'The data journey', 'flow.sources': 'Source tables',
+            'flow.ops': 'Operations', 'flow.storage': 'Central storage', 'flow.restore': 'Restoration',
+            'func.label': 'Functions', 'func.title': 'Two functions, all the power',
+            'func.capture': 'Automatic capture of each operation. OLD values are serialized to JSONB with timestamp and user.',
+            'func.recon': 'Historical data reconstruction. Filtering by table, operation, period and user.',
+            'func.behavior': 'Trigger behavior', 'func.th.op': 'Operation', 'func.th.cap': 'Capture', 'func.th.sem': 'Semantics',
+            'func.del.sem': 'Last trace before deletion', 'func.upd.sem': 'Previous state preserved', 'func.ins.sem': 'Birth recorded',
+            'func.example': 'Recovery example',
+            'adv.label': 'Advantages', 'adv.title': 'Why Blackhole?',
+            'adv.c1.t': 'Centralization', 'adv.c1.d': 'One table per schema instead of N mirror tables',
+            'adv.c2.t': 'JSONB Flexibility', 'adv.c2.d': 'Schema-agnostic, zero migration',
+            'adv.c3.t': 'Scalability', 'adv.c3.d': 'New tables without modification',
+            'adv.c4.t': 'Traceability', 'adv.c4.d': 'User + timestamp per operation',
+            'adv.c5.t': 'Performance', 'adv.c5.d': 'Composite index, O(log n)',
+            'adv.c6.t': 'Recovery', 'adv.c6.d': 'Dynamic JSONB reconstruction',
+            'footer.desc': 'Every modification, deletion or insertion leaves a trace. Blackhole preserves your data history and gives you the power to travel back in time.',
+            'footer.project': 'Project', 'footer.docs': 'Documentation'
+        },
+        fr: {
+            'nav.arch': 'Architecture', 'nav.flow': 'Flux', 'nav.func': 'Fonctions', 'nav.adv': 'Avantages',
+            'hero.sub': 'Les donnees supprimees ne disparaissent jamais. Aspirees par le trou noir, elles sont capturees et pretes a etre recuperees.',
+            'hero.github': 'Voir sur GitHub', 'hero.discover': 'Decouvrir', 'hero.scroll': 'Defiler',
+            'stats.schemas': 'Schemas supportes', 'stats.trigger': 'Fonction trigger', 'stats.recover': 'Fonction recover', 'stats.consol': 'Consolidation',
+            'arch.label': 'Architecture', 'arch.title': 'De la complexite a la simplicite',
+            'arch.desc': 'Une seule fonction trigger remplace des dizaines de tables miroir. Le stockage JSONB centralise permet une flexibilite totale.',
+            'arch.before': 'Avant', 'arch.frag': 'Architecture fragmentee', 'arch.central': 'Architecture centralisee',
+            'flow.label': 'Flux de donnees', 'flow.title': 'Le voyage des donnees', 'flow.sources': 'Tables sources',
+            'flow.ops': 'Operations', 'flow.storage': 'Stockage central', 'flow.restore': 'Restauration',
+            'func.label': 'Fonctions', 'func.title': 'Deux fonctions, toute la puissance',
+            'func.capture': 'Capture automatique de chaque operation. Les valeurs OLD sont serialisees en JSONB avec timestamp et utilisateur.',
+            'func.recon': 'Reconstruction des donnees historiques. Filtrage par table, operation, periode et utilisateur.',
+            'func.behavior': 'Comportement du trigger', 'func.th.op': 'Operation', 'func.th.cap': 'Capture', 'func.th.sem': 'Semantique',
+            'func.del.sem': 'Derniere trace avant disparition', 'func.upd.sem': 'Etat precedent preserve', 'func.ins.sem': 'Naissance enregistree',
+            'func.example': 'Exemple de recuperation',
+            'adv.label': 'Avantages', 'adv.title': 'Pourquoi Blackhole ?',
+            'adv.c1.t': 'Centralisation', 'adv.c1.d': 'Une table par schema au lieu de N tables miroir',
+            'adv.c2.t': 'Flexibilite JSONB', 'adv.c2.d': 'Schema-agnostique, zero migration',
+            'adv.c3.t': 'Evolutivite', 'adv.c3.d': 'Nouvelles tables sans modification',
+            'adv.c4.t': 'Tracabilite', 'adv.c4.d': 'Utilisateur + timestamp par operation',
+            'adv.c5.t': 'Performance', 'adv.c5.d': 'Index composite, O(log n)',
+            'adv.c6.t': 'Recuperation', 'adv.c6.d': 'Reconstruction dynamique JSONB',
+            'footer.desc': 'Chaque modification, suppression ou insertion laisse une empreinte. Blackhole preserve l\'histoire de vos donnees et vous offre le pouvoir de remonter le temps.',
+            'footer.project': 'Projet', 'footer.docs': 'Documentation'
+        }
+    };
+
+    let currentLang = localStorage.getItem('lang') || 'en';
+
+    function setLang(lang) {
+        currentLang = lang;
+        localStorage.setItem('lang', lang);
+        document.documentElement.lang = lang;
+        document.getElementById('langLabel').textContent = lang === 'en' ? 'FR' : 'EN';
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (i18n[lang][key]) el.textContent = i18n[lang][key];
+        });
+    }
+
+    function toggleLang() {
+        setLang(currentLang === 'en' ? 'fr' : 'en');
+    }
+
+    // Init lang
+    setLang(currentLang);
+
+    // Nav scroll + hide scroll hint
     const nav = document.getElementById('nav');
+    const scrollHint = document.querySelector('.scroll-hint');
     window.addEventListener('scroll', () => {
         nav.classList.toggle('visible', window.scrollY > 100);
+        if (scrollHint) scrollHint.classList.toggle('hidden', window.scrollY > 50);
     });
 
     // Reveal on scroll
