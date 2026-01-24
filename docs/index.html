@@ -9,7 +9,7 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
     --bg:#09090b;--surface:#18181b;--surface-2:#27272a;--border:#3f3f46;
-    --text:#fafafa;--text-muted:#a1a1aa;--accent:#8b5cf6;--accent-glow:rgba(139,92,246,0.3);
+    --text:#fafafa;--text-muted:#a1a1aa;--accent:#d946ef;--accent-glow:rgba(217,70,239,0.3);
     --capture:#f59e0b;--recover:#10b981;--delete:#ef4444;--insert:#22c55e;--update:#eab308;
 }
 html{scroll-behavior:smooth}
@@ -18,25 +18,30 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 
 /* Hero */
 .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:2rem}
-.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(139,92,246,0.15),transparent)}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(217,70,239,0.15),transparent)}
 .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,black,transparent)}
 
-/* Blackhole Animation - Realistic */
-.blackhole-container{position:relative;width:300px;height:300px;margin-bottom:3rem}
-.blackhole-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,transparent 30%,rgba(255,140,50,0.15) 50%,rgba(255,100,30,0.1) 70%,transparent 80%);animation:pulse-glow 3s ease-in-out infinite}
-@keyframes pulse-glow{0%,100%{opacity:0.8;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}}
-.photon-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:120px;height:120px;border-radius:50%;border:2px solid rgba(255,150,50,0.6);box-shadow:0 0 30px rgba(255,120,50,0.4),0 0 60px rgba(255,100,30,0.2),inset 0 0 20px rgba(255,150,50,0.3)}
-.event-horizon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:80px;height:80px;border-radius:50%;background:#000;box-shadow:0 0 50px 20px rgba(0,0,0,1),0 0 80px 40px rgba(0,0,0,0.8)}
-.singularity{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:#000}
-
-/* Data Particles - Smooth continuous absorption */
-.particle{position:absolute;top:50%;left:50%;margin:-7px 0 0 -7px;width:14px;height:14px;border-radius:50%;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:700;color:white;z-index:10;will-change:transform,opacity;opacity:0;transform:rotate(0deg) translateX(160px)}
-.particle-delete{background:var(--delete);box-shadow:0 0 20px var(--delete);animation:vortex 4s linear infinite}
-.particle-insert{background:var(--insert);box-shadow:0 0 20px var(--insert);animation:vortex 4s linear infinite 1.33s}
-.particle-update{background:var(--update);box-shadow:0 0 20px var(--update);animation:vortex 4s linear infinite 2.66s}
-@keyframes vortex{
-  0%{transform:rotate(0deg) translateX(160px) scale(1);opacity:1}
-  100%{transform:rotate(720deg) translateX(0) scale(0);opacity:0}
+/* Blackhole GIF - Cover style */
+.blackhole-container{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:1;
+}
+.bh-gif{
+    width:clamp(500px,85vw,1100px);
+    height:auto;
+    mix-blend-mode:screen;
+    opacity:0.85;
+    filter:saturate(1.1) brightness(1.05);
+    mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,black 35%,transparent 75%);
+    -webkit-mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,black 35%,transparent 75%);
 }
 
 /* Hero Content */
@@ -193,13 +198,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:4rem
         <div class="hero-grid"></div>
         
         <div class="blackhole-container">
-            <div class="blackhole-glow"></div>
-            <div class="photon-ring"></div>
-            <div class="event-horizon"></div>
-            <div class="singularity"></div>
-            <div class="particle particle-delete">D</div>
-            <div class="particle particle-insert">I</div>
-            <div class="particle particle-update">U</div>
+            <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExb3N5MThrZzNyMXR1bHp4cmg3ODFiYzR0bWJnb2xmZDBnaThjeXY4eiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/JbULt5YH1yQm9qnkqX/giphy.gif" alt="Blackhole" class="bh-gif">
         </div>
         
         <div class="hero-content">
